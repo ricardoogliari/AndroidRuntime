@@ -3,6 +3,7 @@ package com.example.arduinoruntime;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
+import java.net.SocketException;
 import java.util.Collections;
 import java.util.List;
 
@@ -24,40 +25,34 @@ public class MainActivity extends ActionBarActivity {
 		TextView txt = (TextView) findViewById(R.id.txtIp);
 
 		try {
-			txt.setText(getIPAddress(true));
+			txt.setText(getIPAddress());
 		} catch (Exception e) {
 			txt.setText("Exception caught =" + e.getMessage());
 		}
 
 	}
-	
-	public String getIPAddress(boolean useIPv4) {
-		try {
-			List<NetworkInterface> interfaces = Collections
-					.list(NetworkInterface.getNetworkInterfaces());
-			for (NetworkInterface intf : interfaces) {
-				List<InetAddress> addrs = Collections.list(intf
-						.getInetAddresses());
-				for (InetAddress addr : addrs) {
-					if (!addr.isLoopbackAddress()) {
-						String sAddr = addr.getHostAddress().toUpperCase();
-						boolean isIPv4 = InetAddressUtils.isIPv4Address(sAddr);
-						if (useIPv4) {
-							if (isIPv4)
-								return sAddr;
-						} else {
-							if (!isIPv4) {
-								int delim = sAddr.indexOf('%'); // drop ip6 port
-																// suffix
-								return delim < 0 ? sAddr : sAddr.substring(0,
-										delim);
-							}
+
+	public String getIPAddress() throws SocketException {
+		List<NetworkInterface> interfaces = Collections.list(NetworkInterface.getNetworkInterfaces());
+		for (NetworkInterface intf : interfaces) {
+			List<InetAddress> addrs = Collections.list(intf.getInetAddresses());
+			for (InetAddress addr : addrs) {
+				if (!addr.isLoopbackAddress()) {
+					String sAddr = addr.getHostAddress();
+					boolean isIPv4 = InetAddressUtils.isIPv4Address(sAddr);
+					//if (useIPv4) {
+						if (isIPv4) {
+							return sAddr;
 						}
-					}
+						/*} else {
+						if (!isIPv4) {
+							int delim = sAddr.indexOf('%');
+							return delim < 0 ? sAddr : sAddr.substring(0, delim);
+						}
+					}*/
 				}
 			}
-		} catch (Exception ex) {
-		} // for now eat exceptions
+		}
 		return "";
 	}
 
@@ -65,7 +60,5 @@ public class MainActivity extends ActionBarActivity {
 		Intent i = new Intent(this, ServiceMarroto.class);
 		startService(i);
 	}
-
-	
 
 }

